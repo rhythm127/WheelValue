@@ -1,0 +1,76 @@
+{
+  "comparison": [
+    {
+      "model": "DummyRegressor",
+      "train_mae": 293510.69909165206,
+      "train_rmse": 522541.14053905755,
+      "train_r2": 0.0,
+      "val_mae": 293531.0938175418,
+      "val_rmse": 521041.12692105136,
+      "val_r2": -0.0003267942753975905,
+      "mae_gap": 20.394725889724214
+    },
+    {
+      "model": "LinearRegression",
+      "train_mae": 93764.30294002467,
+      "train_rmse": 178190.12625363242,
+      "train_r2": 0.8837180758433144,
+      "val_mae": 95876.16270871206,
+      "val_rmse": 187101.8565704486,
+      "val_r2": 0.8689719711873284,
+      "mae_gap": 2111.8597686873836
+    },
+    {
+      "model": "DecisionTreeRegressor",
+      "train_mae": 2687.2294950971454,
+      "train_rmse": 12607.669100628293,
+      "train_r2": 0.9994125866074999,
+      "val_mae": 103717.07679409739,
+      "val_rmse": 227683.6274302341,
+      "val_r2": 0.8065024902594766,
+      "mae_gap": 101029.84729900025
+    },
+    {
+      "model": "RandomForestRegressor",
+      "train_mae": 31034.14831387471,
+      "train_rmse": 72188.6418476396,
+      "train_r2": 0.9808591895662231,
+      "val_mae": 79506.4471668631,
+      "val_rmse": 171818.182979732,
+      "val_r2": 0.8890944192703367,
+      "mae_gap": 48472.29885298839
+    },
+    {
+      "model": "GradientBoostingRegressor",
+      "train_mae": 77706.35330648212,
+      "train_rmse": 143636.50453272613,
+      "train_r2": 0.9244449937458322,
+      "val_mae": 84369.77947623417,
+      "val_rmse": 171582.67542262466,
+      "val_r2": 0.890556370563419,
+      "mae_gap": 6663.4261697520415
+    },
+    {
+      "model": "Tuned RandomForestRegressor",
+      "train_mae": 31034.14831387471,
+      "train_rmse": 72188.64184763966,
+      "train_r2": 0.9808591895662229,
+      "val_mae": 79506.44716686313,
+      "val_rmse": 171818.18297973194,
+      "val_r2": 0.8890944192703369,
+      "mae_gap": 48472.29885298842
+    }
+  ],
+  "winner": "RandomForestRegressor",
+  "parameters": {},
+  "search_params": {
+    "regressor__randomforestregressor__min_samples_leaf": 1,
+    "regressor__randomforestregressor__max_depth": null
+  },
+  "validation_mae": 79506.4471668631,
+  "test": {
+    "mae": 72615.75480443209,
+    "rmse": 131855.07443584307,
+    "r2": 0.9062654151342302
+  }
+}

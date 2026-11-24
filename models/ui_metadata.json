@@ -1,0 +1,102 @@
+{
+  "reference_year": 2020,
+  "feature_columns": [
+    "car_age",
+    "km_driven",
+    "mileage",
+    "engine",
+    "max_power",
+    "seats",
+    "brand",
+    "fuel",
+    "seller_type",
+    "transmission",
+    "owner"
+  ],
+  "categorical_options": {
+    "brand": [
+      "Ambassador",
+      "Audi",
+      "BMW",
+      "Chevrolet",
+      "Daewoo",
+      "Datsun",
+      "Fiat",
+      "Force",
+      "Ford",
+      "Honda",
+      "Hyundai",
+      "Isuzu",
+      "Jaguar",
+      "Jeep",
+      "Kia",
+      "Land Rover",
+      "MG",
+      "Mahindra",
+      "Maruti",
+      "Mercedes-Benz",
+      "Mitsubishi",
+      "Nissan",
+      "Peugeot",
+      "Renault",
+      "Skoda",
+      "Tata",
+      "Toyota",
+      "Volkswagen",
+      "Volvo"
+    ],
+    "fuel": [
+      "CNG",
+      "Diesel",
+      "LPG",
+      "Petrol"
+    ],
+    "seller_type": [
+      "Dealer",
+      "Individual",
+      "Trustmark Dealer"
+    ],
+    "transmission": [
+      "Automatic",
+      "Manual"
+    ],
+    "owner": [
+      "First Owner",
+      "Fourth & Above Owner",
+      "Second Owner",
+      "Third Owner"
+    ]
+  },
+  "numeric_ranges": {
+    "year": {
+      "min": 1983.0,
+      "max": 2020.0,
+      "median": 2014.0
+    },
+    "km_driven": {
+      "min": 1.0,
+      "max": 2360457.0,
+      "median": 68000.0
+    },
+    "mileage": {
+      "min": 9.0,
+      "max": 42.0,
+      "median": 19.56
+    },
+    "engine": {
+      "min": 624.0,
+      "max": 3604.0,
+      "median": 1248.0
+    },
+    "max_power": {
+      "min": 32.8,
+      "max": 400.0,
+      "median": 81.83
+    },
+    "seats": {
+      "min": 2.0,
+      "max": 10.0,
+      "median": 5.0
+    }
+  }
+}
