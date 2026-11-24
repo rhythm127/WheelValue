@@ -41,6 +41,26 @@ Activate with `source .venv/bin/activate` on macOS/Linux or `.\.venv\Scripts\Act
 python -m pip install -r requirements.txt
 python -m src.train
 pytest -v
+```
+
+### HTML/CSS/JS web app (FastAPI + uvicorn)
+
+```sh
+uvicorn api.server:app --host 127.0.0.1 --port 8000
+```
+
+Open <http://127.0.0.1:8000> in your browser. The server loads the trained pipeline and all JSON metadata once at startup and exposes:
+
+| Endpoint | Method | Purpose |
+|---|---|---|
+| `/` | GET | Serves `frontend/index.html` |
+| `/api/metadata` | GET | Form dropdowns, numeric bounds, model metrics, feature importance |
+| `/api/predict` | POST | Validate input, predict INR price, return SHAP contributions |
+| `/api/analytics` | GET | Aggregated training-data charts (`?fuel=&transmission=` filters) |
+
+### Streamlit app (alternative)
+
+```sh
 streamlit run app/app.py
 ```
 
@@ -55,8 +75,10 @@ The included artifacts also support launching the app directly. Each training in
 | `notebooks/` | Inspection, cleaning, training-only EDA, modeling and explanation |
 | `src/` | Shared features, validation, training and explainability |
 | `models/` | Pipeline, metrics, UI metadata and permutation importance |
+| `api/server.py` | FastAPI server: JSON endpoints + static frontend serving |
+| `frontend/` | HTML5/CSS3/Vanilla JS SPA (index.html, styles.css, app.js) |
 | `app/app.py` | Streamlit predictor, analytics and performance views |
-| `tests/` | Feature validation and artifact integration tests |
+| `tests/` | Feature validation, artifact integration, and API endpoint tests |
 
 ## Screenshots
 

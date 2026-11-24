@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WheelValue — Used Car Price Estimator</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <!-- Chart.js via CDN (no build tooling) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     DISCLAIMER BANNER
+════════════════════════════════════════════════════════ -->
+<div class="disclaimer-banner" role="note" aria-label="Data disclaimer">
+  <svg class="icon-info" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+  </svg>
+  <span>
+    <strong>Market Limitation Notice:</strong>
+    Estimates reflect <strong>2019–2020 CarDekho</strong> market listings and serve as a
+    historical decision guide — not an official valuation certificate.
+    Vehicle age is always computed as <code>2020 − year</code>.
+  </span>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     TOP NAVIGATION
+════════════════════════════════════════════════════════ -->
+<header class="site-header">
+  <div class="header-inner container">
+    <div class="logo-block">
+      <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <circle cx="5" cy="17" r="2"/><circle cx="19" cy="17" r="2"/>
+        <path d="M3 17l1-6h4l3-5h5l3 5h2l1 6"/>
+      </svg>
+      <span class="logo-text">WheelValue</span>
+      <span class="logo-tagline">Used-car price estimator</span>
+    </div>
+    <nav class="tab-nav" aria-label="Application views">
+      <button class="tab-btn active" data-tab="predictor" aria-selected="true">
+        Price Predictor
+      </button>
+      <button class="tab-btn" data-tab="analytics" aria-selected="false">
+        Market Analytics
+      </button>
+      <button class="tab-btn" data-tab="performance" aria-selected="false">
+        Model Performance
+      </button>
+    </nav>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════
+     MAIN CONTENT
+════════════════════════════════════════════════════════ -->
+<main class="container main-content">
+
+  <!-- ─────────────────────────────────────────────────────
+       VIEW 1: PRICE PREDICTOR
+  ───────────────────────────────────────────────────── -->
+  <section id="tab-predictor" class="tab-view active" aria-labelledby="tab-predictor-label">
+    <h1 id="tab-predictor-label" class="sr-only">Price Predictor</h1>
+
+    <div class="predictor-grid">
+
+      <!-- INPUT FORM -->
+      <div class="form-card card">
+        <h2 class="card-title">Car Details</h2>
+
+        <!-- Validation errors -->
+        <div id="validation-errors" class="error-alert" role="alert" aria-live="polite" hidden>
+          <strong>Please fix the following:</strong>
+          <ul id="error-list"></ul>
+        </div>
+
+        <form id="car-form" novalidate>
+
+          <!-- SECTION A: Vehicle Identity & History -->
+          <fieldset class="form-section">
+            <legend class="section-legend">
+              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/></svg>
+              Vehicle Identity &amp; History
+            </legend>
+
+            <div class="field-group">
+              <label class="field-label" for="f-brand">Brand</label>
+              <select id="f-brand" name="brand" class="field-input" required>
+                <option value="">Select brand…</option>
+              </select>
+            </div>
+
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label" for="f-year">Manufacturing Year</label>
+                <input id="f-year" name="year" type="number" class="field-input"
+                       placeholder="e.g. 2015" min="1983" max="2020" step="1" required />
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="f-km_driven">Distance Driven (km)</label>
+                <input id="f-km_driven" name="km_driven" type="number" class="field-input"
+                       placeholder="e.g. 60000" min="0" step="1" required />
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="f-owner">Ownership</label>
+              <select id="f-owner" name="owner" class="field-input" required>
+                <option value="">Select ownership…</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="f-seller_type">Seller Type</label>
+              <select id="f-seller_type" name="seller_type" class="field-input" required>
+                <option value="">Select seller type…</option>
+              </select>
+            </div>
+          </fieldset>
+
+          <!-- SECTION B: Technical Specifications -->
+          <fieldset class="form-section">
+            <legend class="section-legend">
+              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+              Technical Specifications
+            </legend>
+
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label" for="f-fuel">Fuel Type</label>
+                <select id="f-fuel" name="fuel" class="field-input" required>
+                  <option value="">Select fuel…</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="f-transmission">Transmission</label>
+                <select id="f-transmission" name="transmission" class="field-input" required>
+                  <option value="">Select transmission…</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label" for="f-mileage">Mileage (km/l)</label>
+                <input id="f-mileage" name="mileage" type="number" class="field-input"
+                       placeholder="e.g. 20.5" min="0" step="0.01" required />
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="f-engine">Engine Capacity (cc)</label>
+                <input id="f-engine" name="engine" type="number" class="field-input"
+                       placeholder="e.g. 1248" min="0" step="1" required />
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label" for="f-max_power">Max Power (bhp)</label>
+                <input id="f-max_power" name="max_power" type="number" class="field-input"
+                       placeholder="e.g. 82" min="0" step="0.1" required />
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="f-seats">Seats</label>
+                <input id="f-seats" name="seats" type="number" class="field-input"
+                       placeholder="e.g. 5" min="2" max="14" step="1" required />
+              </div>
+            </div>
+          </fieldset>
+
+          <div class="form-actions">
+            <button type="submit" id="predict-btn" class="btn btn-primary">
+              <span class="btn-text">Estimate Resale Price</span>
+              <span class="btn-spinner" hidden aria-hidden="true"></span>
+            </button>
+            <button type="button" id="reset-btn" class="btn btn-secondary">Reset</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- RESULTS PANEL -->
+      <div class="results-panel">
+
+        <!-- Empty state -->
+        <div id="result-empty" class="card empty-state">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <circle cx="24" cy="24" r="20"/>
+            <path d="M12 32c2-6 14-6 14 0"/>
+            <circle cx="17" cy="20" r="2" fill="currentColor"/>
+            <circle cx="31" cy="20" r="2" fill="currentColor"/>
+          </svg>
+          <p>Enter your car's details and click <strong>Estimate Resale Price</strong> to see the prediction.</p>
+        </div>
+
+        <!-- Populated state -->
+        <div id="result-populated" hidden>
+
+          <!-- Hero price card -->
+          <div class="card price-hero-card">
+            <div class="price-label">Estimated Resale Price</div>
+            <div id="hero-price" class="hero-price">—</div>
+            <div id="hero-lakhs" class="hero-lakhs"></div>
+            <div id="error-range-pill" class="error-range-pill"></div>
+            <div class="mae-note">± ₹<span id="mae-value">—</span> validation MAE</div>
+          </div>
+
+          <!-- Submitted summary strip -->
+          <div class="card submitted-strip">
+            <h3 class="strip-title">Submitted Specs</h3>
+            <div id="submitted-pills" class="pill-row"></div>
+          </div>
+
+          <!-- SHAP explanation -->
+          <div class="card shap-card">
+            <h3 class="shap-title">Why this price?</h3>
+            <p class="shap-subtitle">Top feature contributions (log-price units)</p>
+            <div class="shap-chart-container">
+              <div id="shap-chart" class="shap-chart" role="img" aria-label="SHAP feature contributions chart"></div>
+            </div>
+            <div class="shap-legend">
+              <span class="legend-dot positive"></span><span>Pushes price higher</span>
+              <span class="legend-dot negative"></span><span>Pushes price lower</span>
+            </div>
+            <ul id="shap-takeaway" class="shap-takeaway"></ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────────────────
+       VIEW 2: MARKET ANALYTICS
+  ───────────────────────────────────────────────────── -->
+  <section id="tab-analytics" class="tab-view" aria-labelledby="tab-analytics-label" hidden>
+    <h1 id="tab-analytics-label" class="page-title">Market Analytics</h1>
+    <p class="page-subtitle">Training-data insights from 2019–2020 CarDekho listings.</p>
+
+    <div class="analytics-filters card">
+      <div class="filter-row">
+        <div class="field-group filter-field">
+          <label class="field-label" for="a-fuel">Filter by Fuel Type</label>
+          <select id="a-fuel" class="field-input">
+            <option value="All">All Fuel Types</option>
+          </select>
+        </div>
+        <div class="field-group filter-field">
+          <label class="field-label" for="a-transmission">Filter by Transmission</label>
+          <select id="a-transmission" class="field-input">
+            <option value="All">All Transmissions</option>
+            <option value="Manual">Manual</option>
+            <option value="Automatic">Automatic</option>
+          </select>
+        </div>
+        <div class="record-badge">
+          <span id="record-count">—</span>
+          <span class="badge-label">listings</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="card chart-card chart-wide">
+        <h3 class="chart-title">Top 15 Brands by Average Resale Price (₹ Lakhs)</h3>
+        <div class="chart-wrap"><canvas id="chart-brands"></canvas></div>
+      </div>
+      <div class="card chart-card">
+        <h3 class="chart-title">Average Resale Price by Fuel Type (₹ Lakhs)</h3>
+        <div class="chart-wrap"><canvas id="chart-fuel"></canvas></div>
+      </div>
+      <div class="card chart-card">
+        <h3 class="chart-title">Average Resale Price vs. Manufacturing Year</h3>
+        <div class="chart-wrap"><canvas id="chart-year"></canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────────────────
+       VIEW 3: MODEL PERFORMANCE
+  ───────────────────────────────────────────────────── -->
+  <section id="tab-performance" class="tab-view" aria-labelledby="tab-performance-label" hidden>
+    <h1 id="tab-performance-label" class="page-title">Model Performance</h1>
+    <p class="page-subtitle">Final holdout evaluation and cross-validation comparison.</p>
+
+    <!-- KPI cards -->
+    <div class="kpi-row">
+      <div class="kpi-card card">
+        <div class="kpi-icon">🏆</div>
+        <div class="kpi-label">Winner</div>
+        <div id="kpi-winner" class="kpi-value kpi-winner-name">—</div>
+      </div>
+      <div class="kpi-card card">
+        <div class="kpi-icon">📏</div>
+        <div class="kpi-label">Test MAE</div>
+        <div id="kpi-mae" class="kpi-value">—</div>
+      </div>
+      <div class="kpi-card card">
+        <div class="kpi-icon">📐</div>
+        <div class="kpi-label">Test RMSE</div>
+        <div id="kpi-rmse" class="kpi-value">—</div>
+      </div>
+      <div class="kpi-card card">
+        <div class="kpi-icon">📊</div>
+        <div class="kpi-label">Test R²</div>
+        <div id="kpi-r2" class="kpi-value">—</div>
+      </div>
+    </div>
+
+    <!-- CV table -->
+    <div class="card table-card">
+      <h3 class="card-title">5-Fold Cross-Validation Comparison</h3>
+      <p class="card-subtitle">MAE and RMSE in INR · MAE Gap = Validation MAE − Training MAE</p>
+      <div class="table-scroll">
+        <table id="cv-table" class="cv-table">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Val MAE (₹)</th>
+              <th>Val RMSE (₹)</th>
+              <th>Val R²</th>
+              <th>Train MAE (₹)</th>
+              <th>MAE Gap (₹)</th>
+            </tr>
+          </thead>
+          <tbody id="cv-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Feature importance chart -->
+    <div class="card">
+      <h3 class="card-title">Global Permutation Feature Importance</h3>
+      <p class="card-subtitle">Average increase in training MAE (₹) after shuffling one feature over 10 repeats.</p>
+      <div id="importance-chart" class="importance-chart" role="img" aria-label="Feature importance chart"></div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    WheelValue · 2019–2020 CarDekho dataset · Estimates are for guidance only
+  </div>
+</footer>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
